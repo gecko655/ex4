@@ -94,6 +94,7 @@ class TestSession extends Thread {
 	TestServer2 srv;
 	PrintWriter pw = null;
 	//...
+    BufferedReader br;
 
 	public TestSession(Socket s, TestServer2 ts2)
 			throws IOException {
@@ -101,9 +102,18 @@ class TestSession extends Thread {
 		this.srv = ts2;
 		pw = new PrintWriter(s.getOutputStream(), true);
                 //...
+		br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 	}
 
 	public void run() {
+	    try {
+	        String message;
+	        while((message = br.readLine())!=null)
+            srv.out(message);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		// クライアントからのメッセージを
 		// Ctrl-D が来るまで一行づつ読み込み
 		// 内容を全クライアントに送信
